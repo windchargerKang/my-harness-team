@@ -50,6 +50,7 @@ Remove-Item -Recurse -Force .\my-harness-team-main, .\harness-team.zip
 
 1. 重启 Claude Code 会话使 commands 生效
 2. 执行 `/harness-team-setup` 初始化项目
+3. 如需卸载，运行 `bash uninstall.sh --target <path>`
 
 ## 目录结构（源码）
 

@@ -7,6 +7,10 @@ description: 检查 Spring Boot 分层、依赖方向和业务逻辑放置是否
 
 # Spring 架构审查
 
+## 适用范围
+
+用于 Spring Boot / Java 服务的分层评审，重点检查 Controller、Service、Domain、Repository 之间的依赖方向和职责边界。
+
 ## 输入
 
 `$ARGUMENTS` = 本次改动涉及的文件、目录或 change id
@@ -14,28 +18,28 @@ description: 检查 Spring Boot 分层、依赖方向和业务逻辑放置是否
 ## 检查项
 
 ### 1. Controller 业务逻辑检查
-- Controller 是否写入了业务逻辑
-- 业务逻辑应仅在 Service/Domain 层
+- Controller 是否写入了业务逻辑。
+- 业务逻辑应仅在 Service/Domain 层。
 
 ### 2. 跨层调用检查
-- Controller 是否直接调用 Mapper / Repository
-- 这是严重违规，应通过 Service 间接访问
+- Controller 是否直接调用 Mapper / Repository。
+- 这是严重违规，应通过 Service 间接访问。
 
 ### 3. Service 依赖检查
-- Service 是否依赖了 Web 层对象（如 HttpServletRequest）
-- Web 层对象不应渗透到业务层
+- Service 是否依赖了 Web 层对象（如 HttpServletRequest）。
+- Web 层对象不应渗透到业务层。
 
 ### 4. DTO/VO 滥用检查
-- DTO/VO 是否被直接当作实体持久化
-- 应该有明确的 DO/Entity
+- DTO/VO 是否被直接当作实体持久化。
+- 应该有明确的 DO/Entity。
 
 ### 5. 跨层耦合检查
-- 是否存在明显的跨层耦合
-- 依赖方向是否正确：Controller → Service → Repository
+- 是否存在明显的跨层耦合。
+- 依赖方向是否正确：Controller → Service → Repository。
 
 ### 6. 逻辑归类检查
-- 是否有可以归为 Domain/Service 的逻辑散落在其他层
-- 比如工具类、转换逻辑等
+- 是否有可以归为 Domain/Service 的逻辑散落在其他层。
+- 比如工具类、转换逻辑等。
 
 ## 输出格式
 
@@ -54,6 +58,7 @@ description: 检查 Spring Boot 分层、依赖方向和业务逻辑放置是否
 
 ## 规则
 
-- 只读操作，不修改任何文件
-- 严格按照 Spring Boot 标准分层
-- 重点关注业务逻辑是否放对了层
+- 只读操作，不修改任何文件。
+- 严格按照 Spring Boot 标准分层。
+- 重点关注业务逻辑是否放对了层。
+- 如果本次变更同时涉及 SQL 风险，可与 `sql-risk-review` 组合使用。

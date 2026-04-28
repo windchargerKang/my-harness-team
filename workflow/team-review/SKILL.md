@@ -27,6 +27,9 @@ description: 并行执行多维评审，按仲裁规则输出统一发布结论
    - `prepare-review`（变更摘要）
    - `spring-architecture-review`（架构边界）
    - `sql-risk-review`（SQL 风险）
+
+
+   
 3. reviewer Agent 汇总：
    - 问题分级（P0/P1/P2）
    - 发布建议（go / conditional-go / no-go）

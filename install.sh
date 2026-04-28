@@ -28,6 +28,7 @@ log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
+record_install_path() { INSTALL_MANIFEST+=("$1"); }
 
 # ============================================
 # 变量
@@ -35,6 +36,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 SKIP_SUPERPOWERS=false
 FORCE=false
 TARGET_DIR="${PWD}"
+INSTALL_MANIFEST=()
 # 兼容 `curl ... | bash` 场景：此时 BASH_SOURCE 可能为空
 SCRIPT_SRC="${BASH_SOURCE:-$0}"
 SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_SRC}")" && pwd)"
@@ -94,6 +96,7 @@ if [ ! -d "${TARGET_DIR}/.claude" ]; then
     mkdir -p "${TARGET_DIR}/.claude"
     log_success ".claude 目录已创建"
 fi
+record_install_path "${TARGET_DIR}/.claude"
 
 SKILLS_DIR="${TARGET_DIR}/.claude/skills"
 
@@ -160,6 +163,7 @@ SKILL_MAP=(
 
 for skill in "${HARNESS_SKILLS[@]}"; do
     mkdir -p "${SKILLS_DIR}/${skill}"
+    record_install_path "${SKILLS_DIR}/${skill}"
 done
 
 # ============================================
@@ -175,6 +179,7 @@ log_info "复制 skill 文件..."
 # 主 setup skill
 if [ -f "${SCRIPT_DIR}/setup/SKILL.md" ]; then
     cp "${SCRIPT_DIR}/setup/SKILL.md" "${SKILLS_DIR}/harness-team-setup/SKILL.md"
+    record_install_path "${SKILLS_DIR}/harness-team-setup"
     log_success "复制 harness-team-setup"
 fi
 
@@ -183,6 +188,7 @@ for skill_path in prepare-review spring-architecture-review sql-risk-review; do
     src="${SCRIPT_DIR}/review-skills/${skill_path}/SKILL.md"
     if [ -f "$src" ]; then
         cp "$src" "${SKILLS_DIR}/${skill_path}/SKILL.md"
+        record_install_path "${SKILLS_DIR}/${skill_path}"
         log_success "复制 $skill_path"
     fi
 done
@@ -193,6 +199,7 @@ for mapping in "${SKILL_MAP[@]}"; do
     src_file="${SCRIPT_DIR}/${src}/SKILL.md"
     if [ -f "$src_file" ]; then
         cp "$src_file" "${SKILLS_DIR}/${dst}/SKILL.md"
+        record_install_path "${SKILLS_DIR}/${dst}"
         log_success "复制 $dst"
     fi
 done
@@ -204,6 +211,8 @@ log_info "复制 agents 和 hooks..."
 
 mkdir -p "${TARGET_DIR}/.claude/agents"
 mkdir -p "${TARGET_DIR}/.claude/hooks"
+record_install_path "${TARGET_DIR}/.claude/agents"
+record_install_path "${TARGET_DIR}/.claude/hooks"
 
 if [ -f "${SCRIPT_DIR}/agents/reviewer.md" ]; then
     cp "${SCRIPT_DIR}/agents/reviewer.md" "${TARGET_DIR}/.claude/agents/reviewer.md"
@@ -221,6 +230,7 @@ done
 
 # team worker scripts
 mkdir -p "${TARGET_DIR}/scripts"
+record_install_path "${TARGET_DIR}/scripts"
 for script in harness-team-autopilot.sh harness-team-workers.sh; do
     src="${SCRIPT_DIR}/scripts/${script}"
     if [ -f "$src" ]; then
@@ -229,6 +239,14 @@ for script in harness-team-autopilot.sh harness-team-workers.sh; do
         log_success "复制脚本 ${script}"
     fi
 done
+
+# uninstall script
+if [ -f "${SCRIPT_DIR}/uninstall.sh" ]; then
+    cp "${SCRIPT_DIR}/uninstall.sh" "${TARGET_DIR}/uninstall.sh"
+    chmod +x "${TARGET_DIR}/uninstall.sh"
+    record_install_path "${TARGET_DIR}/uninstall.sh"
+    log_success "复制 uninstall.sh"
+fi
 
 # ============================================
 # Step 5: 复制规约文件
@@ -264,6 +282,9 @@ mkdir -p "${OPENSPEC_TEAM_DIR}/skills"
 mkdir -p "${OPENSPEC_TEAM_TEMPLATES_DIR}"
 mkdir -p "${HOME}/.harness-team/knowledge"
 mkdir -p "${HOME}/.harness-team/skills"
+record_install_path "${OPENSPEC_TEAM_DIR}"
+record_install_path "${OPENSPEC_TEAM_TEMPLATES_DIR}"
+record_install_path "${HOME}/.harness-team"
 
 if [ ! -f "${OPENSPEC_TEAM_DIR}/specs/index.md" ]; then
     cat > "${OPENSPEC_TEAM_DIR}/specs/index.md" <<'EOF'
@@ -273,6 +294,7 @@ if [ ! -f "${OPENSPEC_TEAM_DIR}/specs/index.md" ]; then
 EOF
     log_success "创建 openspec-team/specs/index.md"
 fi
+record_install_path "${OPENSPEC_TEAM_DIR}/specs/index.md"
 
 if [ -d "$TEAM_TEMPLATE_SRC" ]; then
     for tpl in "$TEAM_TEMPLATE_SRC"/*.md; do
@@ -285,6 +307,7 @@ if [ -d "$TEAM_TEMPLATE_SRC" ]; then
             cp "$tpl" "$dst_file"
             log_success "复制 team 模板 ${file_name}"
         fi
+        record_install_path "$dst_file"
     done
 fi
 
@@ -329,10 +352,16 @@ else
     echo "{\"commands\": $COMMANDS_JSON}" > "$SETTINGS_FILE"
     log_success "创建 settings.json"
 fi
+record_install_path "$SETTINGS_FILE"
 
 # ============================================
 # 完成
 # ============================================
+MANIFEST_FILE="${TARGET_DIR}/.harness-team-install-manifest"
+{
+    printf '%s\n' "${INSTALL_MANIFEST[@]}"
+} > "$MANIFEST_FILE"
+
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN} Harness Suite 安装完成！${NC}"
@@ -351,6 +380,7 @@ echo ""
 echo -e "${YELLOW}下一步:${NC}"
 echo "  1. 重启 Claude Code 会话使 commands 生效"
 echo "  2. 执行 /harness-team-setup 初始化项目"
+echo "  3. 如需卸载，执行 ./uninstall.sh"
 echo ""
 
 # ============================================
@@ -370,6 +400,11 @@ fi
 # 安全修复：不再自动删除“解压目录/脚本目录”。
 # 原逻辑在本地路径执行 install.sh 时可能误删真实项目目录。
 # 如需清理，请由用户手动执行。
+
+if [ ${#INSTALL_MANIFEST[@]} -gt 0 ]; then
+    printf '%s\n' "${INSTALL_MANIFEST[@]}" > "${TARGET_DIR}/.harness-team-install-manifest"
+    log_success "已写入卸载清单"
+fi
 
 echo ""
 log_success "清理完成"
