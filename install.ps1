@@ -103,7 +103,16 @@ foreach ($targetSkill in $setupTargets) {
     $dst = Join-Path $dstDir 'SKILL.md'
     New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
     Copy-Item -Path $setupSrc -Destination $dst -Force
+    Add-InstallPath $dstDir
     Write-Success "Copied $targetSkill"
+}
+
+# install manifest for uninstall
+$installManifest = New-Object System.Collections.Generic.List[string]
+function Add-InstallPath([string]$Path) {
+    if ($Path -and (-not $installManifest.Contains($Path))) {
+        $installManifest.Add($Path) | Out-Null
+    }
 }
 
 foreach ($entry in $skillMap) {
@@ -113,11 +122,13 @@ foreach ($entry in $skillMap) {
 
     New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
     Copy-Item -Path $src -Destination $dst -Force
+    Add-InstallPath $dstDir
     Write-Success "Copied $($entry.dst)"
 }
 
 Write-Info "Copying Agent and Hooks..."
 Copy-Item -Path (Join-Path $ScriptRoot 'agents/reviewer.md') -Destination (Join-Path $AgentsDir 'reviewer.md') -Force
+Add-InstallPath $AgentsDir
 Write-Success "Copied reviewer agent"
 
 $hookFiles = @('guard_write.py', 'ensure_change_context.py', 'run_checks.sh')
@@ -125,6 +136,7 @@ foreach ($hook in $hookFiles) {
     $src = Join-Path $ScriptRoot ("hooks/{0}" -f $hook)
     $dst = Join-Path $HooksDir $hook
     Copy-Item -Path $src -Destination $dst -Force
+    Add-InstallPath $HooksDir
     Write-Success "Copied $hook"
 }
 
@@ -136,6 +148,7 @@ foreach ($script in $teamScripts) {
     $src = Join-Path $ScriptRoot ("scripts/{0}" -f $script)
     if (Test-Path $src) {
         Copy-Item -Path $src -Destination (Join-Path $scriptDir $script) -Force
+        Add-InstallPath $scriptDir
         Write-Success "Copied $script"
     }
 }
@@ -150,6 +163,7 @@ foreach ($file in $rootFiles) {
     }
     else {
         Copy-Item -Path $src -Destination $dst -Force
+        Add-InstallPath $dst
         Write-Success "Copied $file"
     }
 }
@@ -172,12 +186,17 @@ New-Item -ItemType Directory -Force -Path $openSpecTeamSkills | Out-Null
 New-Item -ItemType Directory -Force -Path $templateDst | Out-Null
 New-Item -ItemType Directory -Force -Path $userKnowledge | Out-Null
 New-Item -ItemType Directory -Force -Path $userSkills | Out-Null
+Add-InstallPath $openSpecTeamDir
+Add-InstallPath $templateDst
+Add-InstallPath $userKnowledge
+Add-InstallPath $userSkills
 
 $specIndex = Join-Path $openSpecTeamSpecs 'index.md'
 if (-not (Test-Path $specIndex)) {
     Set-Content -Path $specIndex -Value "# openspec-team specs`n`n用于维护 Team 工作流相关的规范索引。" -Encoding UTF8
     Write-Success "Created openspec-team/specs/index.md"
 }
+Add-InstallPath $specIndex
 
 if (Test-Path $templateSrc) {
     Get-ChildItem -Path $templateSrc -Filter '*.md' | ForEach-Object {
@@ -191,6 +210,7 @@ if (Test-Path $templateSrc) {
         }
     }
 }
+Add-InstallPath $templateDst
 
 Write-Info "Configuring commands..."
 $settingsPath = Join-Path $ClaudeDir 'settings.json'
@@ -223,6 +243,10 @@ if (-not (Test-Path $settingsPath)) {
 else {
     Write-Warn ".claude/settings.json already exists, please merge commands manually"
 }
+
+$manifestPath = Join-Path $Target '.harness-team-install-manifest'
+$installManifest | Sort-Object -Unique | Set-Content -Path $manifestPath -Encoding UTF8
+Write-Success "Wrote uninstall manifest"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
