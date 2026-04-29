@@ -26,7 +26,7 @@
 
 ## openspec-team 目录说明
 
-`openspec-team/` 目录**不在**仓库中预置，它由 setup/install 动态创建：
+`openspec-team/` 目录**不在**仓库中预置，它由 setup/install 动态创建；其中 `openspec-team/design/` 会由 `docs_template/design/` 初始化：
 
 ```text
 openspec-team/

@@ -12,7 +12,7 @@
 
 - **继承**：沿用原来的规范化工程思路（proposal/plan/apply/review/archive/knowledge）
 - **升级**：统一为 `harness-team-*` 命令体系，工作目录升级为 `openspec-team/`
-- **增强**：引入多智能体分工、verify/fix 闭环、PRD(GWT) 验收合同、tmux worker 可视化
+- **增强**：引入多智能体分工、verify/fix 闭环、PRD(GWT) 验收合同、tmux worker 可视化、前端设计规范与标准化模板（由 `docs_template/design/` 初始化到 `openspec-team/design/`）
 
 如果你之前使用的是 `harness-suite`，可以把本项目作为“兼容思维框架 + 强化执行编排”的下一代替换方案。
 
@@ -81,6 +81,7 @@ harness-suite/
 │   └── run_checks.sh
 ├── docs_template/
 │   ├── architecture/
+│   ├── design/
 │   ├── product/
 │   ├── standards/
 │   ├── specs/
@@ -181,7 +182,7 @@ tmux 可视化 worker：
 | `/harness-apply` | `/harness-team-apply` | 里程碑执行实现 |
 | - | `/harness-team-verify` | **新增**：质量门禁验证阶段 |
 | - | `/harness-team-fix` | **新增**：验证失败后的修复循环 |
-| `/harness-review` | `/harness-team-review` | 并行评审（含冲突仲裁） |
+| `/harness-review` | `/harness-team-review` | 并行评审（含冲突仲裁），并核对前端模板遵守情况 |
 | `/harness-archive` | `/harness-team-archive` | 归档变更工件 |
 | `/harness-knowledge` | `/harness-team-knowledge` | 知识沉淀与复用 |
 | - | `/harness-team-run` | **新增**：一键流水线（支持 `--quick/--strict`） |
@@ -192,6 +193,7 @@ tmux 可视化 worker：
 ### 关键升级点
 
 - 工作目录从 `openspec/` 迁移为 `openspec-team/`
+- `openspec-team/design/` 由 `docs_template/design/` 预置前端设计原则、检查清单、映射规则与模板
 - 流水线从“手动逐阶段触发”升级为“staged pipeline + verify/fix 闭环”
 - 引入多智能体角色分工（planner/architect/prd-agent/executor/verifier/reviewer）
 - 支持 tmux worker 可视化与自动化执行

@@ -1,27 +1,18 @@
-# 前端设计模板
+# Frontend Design Resources
 
-本目录用于预置 `harness-team` 流程的前端设计规范与 UI 模板。
+This directory contains the default frontend design resources that are copied into `openspec-team/design/` during installation.
 
-在安装或初始化时，这些文件会被复制到目标项目的 `openspec-team/design/`。
+## Files
 
-## 目录结构
+- `principles.md` — global frontend design principles
+- `checklist.md` — shared checklist for apply / verify / review
+- `mapping.md` — rules for selecting a template by page type
+- `templates/` — standardized UI templates for common scenarios
 
-```text
-design/
-├─ principles.md
-├─ checklist.md
-├─ mapping.md
-└─ templates/
-   ├─ b2b-dashboard.md
-   ├─ b2b-form-heavy.md
-   ├─ consumer-marketing.md
-   ├─ consumer-content.md
-   └─ neutral-default.md
-```
+## Template set
 
-## 用途
-
-- `principles.md`：全局设计原则
-- `checklist.md`：`apply` / `verify` / `review` 共用检查项
-- `mapping.md`：页面类型到模板的映射规则
-- `templates/`：可直接引用的 UI 标准模板
+- `b2b-dashboard.md`
+- `b2b-form-heavy.md`
+- `consumer-marketing.md`
+- `consumer-content.md`
+- `neutral-default.md`
