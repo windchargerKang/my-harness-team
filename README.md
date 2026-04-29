@@ -1,4 +1,4 @@
-# Harness Suite
+# Harness Team
 
 基于 Team-First 思想 + Superpowers 工作流的多智能体研发规约框架。
 
@@ -8,7 +8,7 @@
 
 ## 与 harness-suite 的关系
 
-`my-harness-team` 可以理解为 `harness-suite` 的 Team-First 进化版：
+`my-harness-team` 可以理解为 [`harness-suite`](https://github.com/windchargerKang/my-harness-suite) 的 Team-First 进化版：
 
 - **继承**：沿用原来的规范化工程思路（proposal/plan/apply/review/archive/knowledge）
 - **升级**：统一为 `harness-team-*` 命令体系，工作目录升级为 `openspec-team/`
