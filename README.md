@@ -1,10 +1,10 @@
 # Harness Team
 
-基于 Team-First 思想 + Superpowers 工作流的多智能体研发规约框架。
+`my-harness-team` 是一套基于 Team-First 思想与 Superpowers 工作流的多智能体研发规约框架，帮助团队把需求规划、任务执行、质量验证和评审整合到同一条可追溯的协作链路中。
 
-## 理念
+## 核心理念
 
-**战略设计（Team Plan）** + **战术执行（Team Apply）** + **闭环验证（Verify/Fix/Review）** = **高效且可追溯的 AI 协作开发**
+通过 **战略设计（Team Plan）**、**战术执行（Team Apply）** 和 **闭环验证（Verify/Fix/Review）** 的组合，让 AI 协作开发更高效、更统一，也更容易追踪和复盘。
 
 ## 与 harness-suite 的关系
 
@@ -37,6 +37,8 @@ Expand-Archive -Path harness-team.zip -DestinationPath . -Force
 powershell -ExecutionPolicy Bypass -File .\my-harness-team-main\install.ps1 -Target (Get-Location)
 Remove-Item -Recurse -Force .\my-harness-team-main, .\harness-team.zip
 ```
+
+> 注意：PowerShell 里请逐行执行，不要把多条命令粘成一行，否则会把 `Expand-Archive` 误当成 `irm` 的参数。
 
 ### 参数
 

@@ -1,15 +1,15 @@
-# Frontend Design Resources
+# 前端设计资源
 
-This directory contains the default frontend design resources that are copied into `openspec-team/design/` during installation.
+本目录用于预置前端设计规范与 UI 模板资源，安装时会复制到目标项目的 `openspec-team/design/`。
 
-## Files
+## 文件说明
 
-- `principles.md` — global frontend design principles
-- `checklist.md` — shared checklist for apply / verify / review
-- `mapping.md` — rules for selecting a template by page type
-- `templates/` — standardized UI templates for common scenarios
+- `principles.md`：全局前端设计原则
+- `checklist.md`：`apply` / `verify` / `review` 共用检查清单
+- `mapping.md`：按页面类型选择模板的规则
+- `templates/`：适用于常见场景的标准化 UI 模板
 
-## Template set
+## 模板列表
 
 - `b2b-dashboard.md`
 - `b2b-form-heavy.md`

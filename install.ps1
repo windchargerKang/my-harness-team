@@ -1,8 +1,12 @@
 param(
     [switch]$SkipSuperpowers,
     [switch]$Force,
-    [string]$Target = (Get-Location).Path
+    [string]$Target
 )
+
+if (-not $Target) {
+    $Target = (Get-Location).Path
+}
 
 $ErrorActionPreference = 'Stop'
 
@@ -222,9 +226,10 @@ else {
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host " Harness Suite installation completed! " -ForegroundColor Green
+Write-Host " Harness Team installation completed! " -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  1. Restart Cursor/Claude session to activate commands"
 Write-Host "  2. Type /harness-team-setup in chat to initialize project"
+Write-Host ""
