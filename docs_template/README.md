@@ -8,6 +8,8 @@
 
 在执行 `/harness-team-setup` 或安装脚本时，这些模板会复制到目标项目。
 
+另外，`docs_template/design/` 用于预置前端设计规范与模板资源，安装时会复制到 `openspec-team/design/`。
+
 ## 各目录用途
 
 | 目录/文件 | 用途 |

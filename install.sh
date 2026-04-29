@@ -273,17 +273,21 @@ log_info "创建 openspec-team 工作目录..."
 
 OPENSPEC_TEAM_DIR="${TARGET_DIR}/openspec-team"
 OPENSPEC_TEAM_TEMPLATES_DIR="${OPENSPEC_TEAM_DIR}/templates"
+OPENSPEC_TEAM_DESIGN_DIR="${OPENSPEC_TEAM_DIR}/design"
 TEAM_TEMPLATE_SRC="${SCRIPT_DIR}/docs_template"
+TEAM_DESIGN_SRC="${SCRIPT_DIR}/docs_template/design"
 
 mkdir -p "${OPENSPEC_TEAM_DIR}/changes/archive"
 mkdir -p "${OPENSPEC_TEAM_DIR}/specs"
 mkdir -p "${OPENSPEC_TEAM_DIR}/knowledge"
 mkdir -p "${OPENSPEC_TEAM_DIR}/skills"
 mkdir -p "${OPENSPEC_TEAM_TEMPLATES_DIR}"
+mkdir -p "${OPENSPEC_TEAM_DESIGN_DIR}"
 mkdir -p "${HOME}/.harness-team/knowledge"
 mkdir -p "${HOME}/.harness-team/skills"
 record_install_path "${OPENSPEC_TEAM_DIR}"
 record_install_path "${OPENSPEC_TEAM_TEMPLATES_DIR}"
+record_install_path "${OPENSPEC_TEAM_DESIGN_DIR}"
 record_install_path "${HOME}/.harness-team"
 
 if [ ! -f "${OPENSPEC_TEAM_DIR}/specs/index.md" ]; then
@@ -308,6 +312,39 @@ if [ -d "$TEAM_TEMPLATE_SRC" ]; then
             log_success "复制 team 模板 ${file_name}"
         fi
         record_install_path "$dst_file"
+    done
+fi
+
+if [ -d "$TEAM_DESIGN_SRC" ]; then
+    mkdir -p "$OPENSPEC_TEAM_DESIGN_DIR/templates"
+    for design_file in "$TEAM_DESIGN_SRC"/*; do
+        [ -e "$design_file" ] || continue
+        rel_name="$(basename "$design_file")"
+        if [ -d "$design_file" ]; then
+            mkdir -p "${OPENSPEC_TEAM_DESIGN_DIR}/${rel_name}"
+            record_install_path "${OPENSPEC_TEAM_DESIGN_DIR}/${rel_name}"
+            for nested in "$design_file"/*; do
+                [ -f "$nested" ] || continue
+                nested_name="$(basename "$nested")"
+                dst_nested="${OPENSPEC_TEAM_DESIGN_DIR}/${rel_name}/${nested_name}"
+                if [ -f "$dst_nested" ] && [ "$FORCE" = false ]; then
+                    log_warn "设计模板 ${rel_name}/${nested_name} 已存在，跳过 (使用 --force 覆盖)"
+                else
+                    cp "$nested" "$dst_nested"
+                    log_success "复制 design 模板 ${rel_name}/${nested_name}"
+                fi
+                record_install_path "$dst_nested"
+            done
+        elif [ -f "$design_file" ]; then
+            dst_design_file="${OPENSPEC_TEAM_DESIGN_DIR}/${rel_name}"
+            if [ -f "$dst_design_file" ] && [ "$FORCE" = false ]; then
+                log_warn "设计文件 ${rel_name} 已存在，跳过 (使用 --force 覆盖)"
+            else
+                cp "$design_file" "$dst_design_file"
+                log_success "复制 design 文件 ${rel_name}"
+            fi
+            record_install_path "$dst_design_file"
+        fi
     done
 fi
 

@@ -8,6 +8,8 @@ description: 执行实现，读取 tasks.md，按多 Agent 分工推进里程碑
 ## 用途
 读取 `tasks.md` 并按里程碑执行开发，保持范围受控并记录执行偏差。
 
+如果本次 change 涉及前端 UI，还需要额外参考 `openspec-team/design/` 下的前端设计规范与模板（如已启用，来源于 `docs_template/design/`）。
+
 ## 使用方式
 
 ```text
